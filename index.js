@@ -5,14 +5,11 @@ const DISBOARD_ID = '302050872383242240';
 const { token, bump_channel } = (await import('./config.json', { with: { type: 'json' } })).default;
 const client = new Client;
 
-await client.login(token);
-console.log(`Logged in as: ${client.user.tag}`);
-console.log(`It is currently ${new Date().toLocaleString()}`);
+const log = (msg) => console.log(`[${new Date().toLocaleString()}] ${msg}`);
+const error = (msg) => { console.error(msg); process.exit(1); };
 
-const error = (message) => {
-	console.error(message);
-	process.exit(1);
-};
+await client.login(token);
+log(`Logged in as: ${client.user.tag}`);
 
 const channel = await client.channels.fetch(bump_channel);
 
@@ -21,7 +18,7 @@ if (!(channel instanceof TextChannel))
 if (!channel.permissionsFor(channel.guild.members.me, true).has('USE_APPLICATION_COMMANDS'))
 	error("You don't have slash command permissions!");
 
-const bump = () => channel.sendSlash(DISBOARD_ID, 'bump').then(() => console.log('Bumped!'));
+const bump = () => channel.sendSlash(DISBOARD_ID, 'bump').then(() => log('Bumped!'));
 
 /**
  * @param {number} hours 
@@ -31,7 +28,7 @@ const hoursToMs = (hours) => 3.6e6 * hours;
 const loop = () => {
 	// send bump message every 2-3 hours, to prevent detection.
 	const timeUntilNextBumpMs = hoursToMs(2 + Math.random());
-	console.log(`Next bump: ${new Date(Date.now() + timeUntilNextBumpMs).toLocaleString()}`);
+	log(`Next bump: ${new Date(Date.now() + timeUntilNextBumpMs).toLocaleTimeString()}`);
 	setTimeout(() => { bump(); loop(); }, timeUntilNextBumpMs);
 };
 
