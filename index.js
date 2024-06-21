@@ -1,36 +1,88 @@
-import { Client, TextChannel } from 'discord.js-selfbot-v13';
+import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
+import assert from 'assert';
 
+// import .env, setup constants and logging
+(await import('dotenv')).config();
+const { TOKEN, BUMP_CHANNEL_ID, CONTACT_USER_ID } = process.env;
 const DISBOARD_ID = '302050872383242240';
+const log = (...values) => { for (const v of values) console.log(`[${new Date().toLocaleString()}] ${v}`); };
 
-const { token, bump_channel } = (await import('./config.json', { with: { type: 'json' } })).default;
+// setup d.js client
 const client = new Client;
-
-const log = (msg) => console.log(`[${new Date().toLocaleString()}] ${msg}`);
-const error = (msg) => { console.error(msg); process.exit(1); };
-
-await client.login(token);
+await client.login(TOKEN);
 log(`Logged in as: ${client.user.tag}`);
+client.user.setPresence({ status: 'invisible' });
 
-const channel = await client.channels.fetch(bump_channel);
+// setup error/interrupt handling
+process.on('uncaughtException', async err => {
+	console.error(err);
+	if (await contact_user?.send(`\`\`\`js\n${err.stack ?? err}\`\`\``))
+		log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`);
+	log('Exiting');
+	process.exit(1);
+});
 
+process.on('SIGINT', async () => {
+	log('SIGINT received');
+	if (await contact_user?.send(`\`SIGINT\` received, exiting`))
+		log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`);
+	log('Exiting');
+	process.exit(1);
+});
+
+// fetch contact user
+/** @type {import('discord.js-selfbot-v13').User | undefined} */
+let contact_user;
+
+if (CONTACT_USER_ID)
+	contact_user = await client.users.fetch(CONTACT_USER_ID);
+
+// fetch bump channel
+const channel = await client.channels.fetch(BUMP_CHANNEL_ID);
+
+if (!channel)
+	throw `Channel ${BUMP_CHANNEL_ID} not found or not accessible!`;
 if (!(channel instanceof TextChannel))
-	error(`Channel ${bump_channel} is not a text channel!`);
+	throw `Channel ${BUMP_CHANNEL_ID} is not a text channel!`;
+assert(channel instanceof TextChannel); // for vscode
 if (!channel.permissionsFor(channel.guild.members.me, true).has('USE_APPLICATION_COMMANDS'))
-	error("You don't have slash command permissions!");
+	throw "You don't have slash command permissions!";
 
-const bump = () => channel.sendSlash(DISBOARD_ID, 'bump').then(() => log('Bumped!'));
+/**
+ * sends `/bump` to disboard.
+ * returns `undefined` or the time in ms until we can `/bump` again.
+ */
+const bump = async () => {
+	const msg = await channel.sendSlash(DISBOARD_ID, 'bump');
+	assert(msg instanceof Message);
+
+	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
+		const { description } = msg.embeds[0];
+		const match = description.match(/\b\d+\b/);
+		if (match) {
+			// if disboard sent '0 minutes', make it 1 to avoid a bad bump
+			const minutes = parseInt(match[0]) || 1;
+			log(`Need to wait ${minutes} minutes until bumping again!`);
+			return minutes * 6e4; // convert to ms
+		}
+	}
+
+	log('Bumped!');
+};
 
 /**
  * @param {number} hours 
  */
 const hoursToMs = (hours) => 3.6e6 * hours;
 
-const loop = () => {
-	// send bump message every 2-3 hours, to prevent detection.
-	const timeUntilNextBumpMs = hoursToMs(2 + Math.random());
-	log(`Next bump: ${new Date(Date.now() + timeUntilNextBumpMs).toLocaleTimeString()}`);
-	setTimeout(() => { bump(); loop(); }, timeUntilNextBumpMs);
+/**
+ * @param {number} bumpDelayMs 
+ */
+const loop = (bumpDelayMs) => {
+	if (bumpDelayMs <= 0)
+		bumpDelayMs = hoursToMs(2 + 0.5 * Math.random());
+	log(`Next bump: ${new Date(Date.now() + bumpDelayMs).toLocaleTimeString()}`);
+	setTimeout(() => bump().then(loop), bumpDelayMs);
 };
 
-bump();
-loop();
+bump().then(loop);
