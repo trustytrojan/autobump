@@ -43,10 +43,10 @@ const channel = await client.channels.fetch(BUMP_CHANNEL_ID);
 if (!channel)
 	throw `Channel ${BUMP_CHANNEL_ID} not found or not accessible!`;
 if (!(channel instanceof TextChannel))
-	throw `Channel ${BUMP_CHANNEL_ID} is not a text channel!`;
+	throw `Channel ${BUMP_CHANNEL_ID} (${channel.name}) is not a text channel!`;
 assert(channel instanceof TextChannel); // for vscode
 if (!channel.permissionsFor(channel.guild.members.me, true).has('USE_APPLICATION_COMMANDS'))
-	throw "You don't have slash command permissions!";
+	throw `You don't have slash command permissions in channel ${BUMP_CHANNEL_ID} (${channel.name})!`;
 
 /**
  * Sends `/bump` to disboard.
@@ -61,9 +61,9 @@ const bump = async () => {
 	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
 		const match = msg.embeds[0].description.match(/\b\d+\b/);
 		if (match) {
-			const minutes = parseInt(match[0]) + 1; // add 1 minute to be safe
-			log(`Need to wait ${minutes} minutes until bumping again!`);
-			return minutes * 6e4; // convert to ms
+			log(`Need to wait ${match[0]} minutes until bumping again!`);
+			// add 1 minute to be safe; convert to ms
+			return (parseInt(match[0]) + 1) * 6e4;
 		}
 	}
 
