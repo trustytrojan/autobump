@@ -57,12 +57,10 @@ const bump = async () => {
 	assert(msg instanceof Message);
 
 	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
-		const { description } = msg.embeds[0];
-		const match = description.match(/\b\d+\b/);
+		const match = msg.embeds[0].description.match(/\b\d+\b/);
 		if (match) {
-			// if disboard sent '0 minutes', make it 1 to avoid a bad bump
-			const minutes = parseInt(match[0]) || 1;
-			log(`Need to wait ${minutes} minutes until bumping again!`);
+			const minutes = parseInt(match[0]) + 1; // add 1 minute to be safe
+			log(`Need to wait ${match[0]} minutes until bumping again!`);
 			return minutes * 6e4; // convert to ms
 		}
 	}
