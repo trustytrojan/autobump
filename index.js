@@ -1,11 +1,11 @@
 import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
 import assert from 'assert';
+import { log, millis } from './util.js';
 
 // import .env, setup constants and logging
 (await import('dotenv')).config();
 const { TOKEN, BUMP_CHANNEL_ID, CONTACT_USER_ID } = process.env;
 const DISBOARD_ID = '302050872383242240';
-const log = (...values) => { for (const v of values) console.log(`[${new Date().toLocaleString()}] ${v}`); };
 
 // setup d.js client
 const client = new Client;
@@ -58,12 +58,17 @@ const bump = async () => {
 	// if this isn't a message, then disboard changed the bumping process!
 	assert(msg instanceof Message);
 
+	if (msg.content.startsWith('The DISBOARD API')) {
+		log(`DISBOARD API is down... waiting a minute to try again`);
+		return millis.fromMinutes(1);
+	}
+
 	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
 		const match = msg.embeds[0].description.match(/\b\d+\b/);
 		if (match) {
 			log(`Need to wait ${match[0]} minutes until bumping again!`);
-			// add 1 minute to be safe; convert to ms
-			return (parseInt(match[0]) + 1) * 6e4;
+			// add 1 minute to be safe
+			return millis.fromMinutes(parseInt(match[0]) + 1);
 		}
 	}
 
@@ -71,16 +76,11 @@ const bump = async () => {
 };
 
 /**
- * @param {number} hours 
- */
-const hoursToMs = (hours) => 3.6e6 * hours;
-
-/**
  * @param {number} bumpDelayMs 
  */
 const loop = (bumpDelayMs) => {
 	if (bumpDelayMs <= 0)
-		bumpDelayMs = hoursToMs(2 + 0.5 * Math.random());
+		bumpDelayMs = millis.fromHours(2 + 0.5 * Math.random());
 	log(`Next bump: ${new Date(Date.now() + bumpDelayMs).toLocaleTimeString()}`);
 	setTimeout(() => bump().then(loop), bumpDelayMs);
 };
