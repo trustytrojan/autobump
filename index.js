@@ -49,18 +49,20 @@ if (!channel.permissionsFor(channel.guild.members.me, true).has('USE_APPLICATION
 	throw "You don't have slash command permissions!";
 
 /**
- * sends `/bump` to disboard.
- * returns `undefined` or the time in ms until we can `/bump` again.
+ * Sends `/bump` to disboard.
+ * @returns Either `undefined` or the time in milliseconds until we can `/bump` again.
  */
 const bump = async () => {
 	const msg = await channel.sendSlash(DISBOARD_ID, 'bump');
+
+	// if this isn't a message, then disboard changed the bumping process!
 	assert(msg instanceof Message);
 
 	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
 		const match = msg.embeds[0].description.match(/\b\d+\b/);
 		if (match) {
 			const minutes = parseInt(match[0]) + 1; // add 1 minute to be safe
-			log(`Need to wait ${match[0]} minutes until bumping again!`);
+			log(`Need to wait ${minutes} minutes until bumping again!`);
 			return minutes * 6e4; // convert to ms
 		}
 	}
