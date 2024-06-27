@@ -31,11 +31,10 @@ process.on('SIGINT', async () => {
 });
 
 // fetch contact user
-/** @type {import('discord.js-selfbot-v13').User | undefined} */
-let contact_user;
+const contact_user = CONTACT_USER_ID ? await client.users.fetch(CONTACT_USER_ID) : null;
 
-if (CONTACT_USER_ID)
-	contact_user = await client.users.fetch(CONTACT_USER_ID);
+if (contact_user)
+	log(`Fetched contact user ${contact_user.id} (${contact_user.username})`);
 
 // fetch bump channel
 const channel = await client.channels.fetch(BUMP_CHANNEL_ID);
@@ -50,7 +49,7 @@ if (!channel.permissionsFor(channel.guild.members.me, true).has('USE_APPLICATION
 
 /**
  * Sends `/bump` to disboard.
- * @returns Either `undefined` or the time in milliseconds until we can `/bump` again.
+ * @returns The time in milliseconds until we can `/bump` again.
  */
 const bump = async () => {
 	const msg = await channel.sendSlash(DISBOARD_ID, 'bump');
@@ -73,14 +72,14 @@ const bump = async () => {
 	}
 
 	log('Bumped!');
+	return millis.fromHours(2) + millis.fromMinutes(1);
 };
 
 /**
- * @param {number} bumpDelayMs 
+ * @param {number} bumpDelayMs The time in milliseconds to schedule the next bump
  */
 const loop = (bumpDelayMs) => {
-	if (bumpDelayMs <= 0)
-		bumpDelayMs = millis.fromHours(2 + 0.5 * Math.random());
+	assert(bumpDelayMs > 0);
 	log(`Next bump: ${new Date(Date.now() + bumpDelayMs).toLocaleTimeString()}`);
 	setTimeout(() => bump().then(loop), bumpDelayMs);
 };
