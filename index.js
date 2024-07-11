@@ -16,8 +16,7 @@ client.user.setPresence({ status: 'invisible' });
 // setup error/interrupt handling
 process.on('uncaughtException', async err => {
 	console.error(err);
-	if (await contact_user?.send(`\`\`\`js\n${err.stack ?? err}\`\`\``))
-		log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`);
+	contact_user?.send(`\`\`\`js\n${err.stack ?? err}\`\`\``).then(() => log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`));
 	log('Exiting');
 	process.exit(1);
 });
