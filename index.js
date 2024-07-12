@@ -16,18 +16,24 @@ client.user.setPresence({ status: 'invisible' });
 // setup error/interrupt handling
 process.on('uncaughtException', async err => {
 	console.error(err);
-	contact_user?.send(`\`\`\`js\n${err.stack ?? err}\`\`\``).then(() => log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`));
+	contact_user?.send(`\`\`\`js\n${err.stack ?? err}\`\`\``) // DO NOT await this
+		.then(() => log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`));
 	log('Exiting');
+	client.destroy();
 	process.exit(1);
 });
 
-process.on('SIGINT', async () => {
-	log('SIGINT received');
-	if (await contact_user?.send(`\`SIGINT\` received, exiting`))
+const signalHandler = async (signal) => {
+	log(`${signal} received`);
+	if (await contact_user?.send(`\`${signal}\` received, exiting`))
 		log(`Message sent to contact user ${CONTACT_USER_ID} (${contact_user.tag})`);
 	log('Exiting');
-	process.exit(1);
-});
+	client.destroy();
+	process.exit();
+};
+
+process.on('SIGINT', signalHandler);
+process.on('SIGTERM', signalHandler);
 
 // fetch contact user
 const contact_user = CONTACT_USER_ID ? await client.users.fetch(CONTACT_USER_ID) : null;
