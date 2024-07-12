@@ -2,16 +2,15 @@ import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
 import assert from 'assert';
 import { log, millis } from './util.js';
 
-// import .env, setup constants and logging
+// import .env; setup constants and logging
 (await import('dotenv')).config();
 const { TOKEN, BUMP_CHANNEL_ID, CONTACT_USER_ID } = process.env;
 const DISBOARD_ID = '302050872383242240';
 
 // setup d.js client
-const client = new Client;
+const client = new Client({ presence: { status: 'invisible' } });
 await client.login(TOKEN);
 log(`Logged in as: ${client.user.tag}`);
-client.user.setPresence({ status: 'invisible' });
 
 // setup error/interrupt handling
 process.on('uncaughtException', async err => {
