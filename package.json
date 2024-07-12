@@ -5,7 +5,7 @@
 	},
 	"type": "module",
 	"scripts": {
-		"start": "node . 2>&1 >log & echo $! >pid",
-		"stop": "kill $(<pid)"
+		"start": "bash -c 'node . &>log & echo $! >pid'",
+		"stop": "bash -c 'kill $(<pid)'"
 	}
 }
