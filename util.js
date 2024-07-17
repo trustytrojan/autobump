@@ -12,8 +12,8 @@ export const log = (msg) => {
 
 export const millis = Object.freeze({
 	/** @param {number} hours */
-	fromHours: hours => 3.6e6 * hours,
+	fromHours: (hours) => 3.6e6 * hours,
 
 	/** @param {number} minutes */
-	fromMinutes: minutes => 6e4 * minutes
+	fromMinutes: (minutes) => 6e4 * minutes
 });
