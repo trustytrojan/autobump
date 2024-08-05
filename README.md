@@ -10,9 +10,9 @@ assuming you are on linux with `npm` installed:
 2. run `npm i` to install dependencies.
 
 3. write a `.env` file with the following structure:
-```json
+```
 TOKEN=token
-BUMP_CHANNEL_ID=bump_channel_id
+CHANNEL_ID=bump_channel_id
 CONTACT_USER_ID=contact_user_id
 ```
 
