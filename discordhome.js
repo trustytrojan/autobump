@@ -25,9 +25,9 @@ export default async function discordhome(channel) {
 		const { description, title } = msg.embeds[0];
 
 		if (description?.startsWith('Unfortunately, ')) {
-			const match = input.match(/(\d+)\s*hours?\s*(\d+)\s*minutes?/);
+			const match = description.match(/(\d+)\s*hours?\s*(\d+)\s*minutes?/);
 			if (match) {
-				log(`Need to wait ${match[1]}h${match[2]}m until bumping again!`);
+				log(`Need to wait ${match[1]}h ${match[2]}m until bumping again!`);
 				return millis.fromHours(parseInt(match[1])) + millis.fromMinutes(parseInt(match[2]) + 1);
 			} else
 				throw new Error('DH Bump cooldown message has changed!');
@@ -52,12 +52,15 @@ export default async function discordhome(channel) {
 			throw new Error('Invalid math expression!');
 		}
 
-		/** @type {number} */
 		const result = eval(mathExpression);
-		const buttonCustomId = msg.components[0].components.find(b => b.label === result).customId;
-		await msg.clickButton(buttonCustomId); // clickButton expects either an (x, y) coordinate or a component's customId
+		assert(typeof result === 'number');
+		const buttonCustomId = msg.components[0].components.find(b => b.type === 'BUTTON' && b.label == result).customId;
+		assert(buttonCustomId);
 
-		// No matter what button is clicked, the bot does not respond to the interaction.
+		// clickButton expects either an (x, y) coordinate or a component's customId
+		await msg.clickButton(buttonCustomId).catch(() => {}); // this interaction WILL fail; discard the error
+
+		// No matter what button is clicked, the bot does not respond to the interaction (considered a "failed interaction").
 		// So we need to verify that the bump was successful by calling /bump again.
 		// Easiest way to do this is recursing, since we have the 'Unfortunately, ' case handled above.
 		return discordhome(channel);
