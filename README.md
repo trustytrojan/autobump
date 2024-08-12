@@ -1,19 +1,23 @@
 # autobump
-a discord selfbot that will send a `/bump` command to disboard every 2 hours with logging.
+A Discord selfbot that can bump several kinds of "bump" bots automatically!
 
-based on [Lozarth/Disboard-Auto-Bump-Selfbot](https://github.com/Lozarth/Disboard-Auto-Bump-Selfbot)
+The original code is based on [Lozarth/Disboard-Auto-Bump-Selfbot](https://github.com/Lozarth/Disboard-Auto-Bump-Selfbot).
 
-## usage
-assuming you are on linux with `npm` installed:
-1. clone the repo: `git clone https://github.com/trustytrojan/autobump`
+## Usage
+Assuming you are on Linux with `npm` installed:
+1. Clone the repo: `git clone https://github.com/trustytrojan/autobump`
 
-2. run `npm i` to install dependencies.
+2. Run `npm i` to install dependencies.
 
-3. write a `.env` file with the following structure:
+3. Write a `.env` file with the following structure:
 ```
-TOKEN=token
-CHANNEL_ID=bump_channel_id
-CONTACT_USER_ID=contact_user_id
+TOKEN=
+CHANNEL_ID=
+CONTACT_USER_ID=
 ```
+- `TOKEN`: Discord user account to use (cannot be a Bot token)
+- `CHANNEL_ID`: channel to send bump commands in
+- `CONTACT_USER_ID`: user to DM in case of errors (optional)
 
-4. run `npm start`. this will start the bot in the background. output will be written to a `log` file, and the node process id in `pid`. to avoid this behavior and run it in the foreground, run `node .`
+4. Currently autobump supports two bump bots: DISBOARD and DiscordHome. To run a DISBOARD autobumper, run `BUMPER=./disboard.js npm start`. Otherwise run `BUMPER=./discordhome.js npm start`.
+This will start the bot in the background using the specified bumper module. Output will be written to a `log` file, and the `node` process ID in `pid`. To avoid this behavior and run it in the foreground, replace `npm start` with `node .`
