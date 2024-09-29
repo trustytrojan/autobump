@@ -20,4 +20,4 @@ CONTACT_USER_ID=
 - `CONTACT_USER_ID`: user to DM in case of errors (optional)
 
 4. Currently autobump supports two bump bots: DISBOARD and DiscordHome. To run a DISBOARD autobumper, run `BUMPER=./disboard.js npm start`. Otherwise run `BUMPER=./discordhome.js npm start`.
-This will start the bot in the background using the specified bumper module. Output will be written to a `log` file, and the `node` process ID in `pid`. To avoid this behavior and run it in the foreground, replace `npm start` with `node .`
+This will start the bot in the background using the specified bumper module. Output will be written to a `log` file, and the `node` process ID in `pid`. To avoid this behavior and run it in the foreground, instead run `node . disboard.js` for a DISBOARD autobumper.
