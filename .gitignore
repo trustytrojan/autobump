@@ -3,3 +3,6 @@ package-lock.json
 .env
 log
 pid
+deno.lock
+dist
+.vscode

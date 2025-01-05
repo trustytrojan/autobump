@@ -1,6 +1,5 @@
-export const log = (msg) => {
-	/** @type {{ stack: string }} */
-	const obj = {};
+export const log = (msg: string) => {
+	const obj: { stack: string } = {} as any;
 	Error.captureStackTrace(obj, log); // Capture the stack trace, excluding `log` itself
 	const stackLines = obj.stack.split('\n');
 	// The first line is the error message itself, which we don't need, and the second line should now be the caller
@@ -11,9 +10,6 @@ export const log = (msg) => {
 };
 
 export const millis = Object.freeze({
-	/** @param {number} hours */
-	fromHours: (hours) => 3.6e6 * hours,
-
-	/** @param {number} minutes */
-	fromMinutes: (minutes) => 6e4 * minutes
+	fromHours: (hours: number) => 3.6e6 * hours,
+	fromMinutes: (minutes: number) => 6e4 * minutes
 });
