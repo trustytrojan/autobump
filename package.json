@@ -8,7 +8,7 @@
 	},
 	"type": "module",
 	"scripts": {
-		"start": "bash -c 'node . &>log & echo $! >pid'",
+		"start": "bash -c 'node dist &>log & echo $! >pid'",
 		"stop": "bash -c 'kill $(<pid)'",
 		"fmt": "prettier --log-level=warn --write ./src/**/*.ts",
 		"build": "tsc"
