@@ -18,4 +18,7 @@ CONTACT_USER_ID=
 - `DISCORDHOME_CHANNEL_ID`: channel to send DiscordHome bump commands in
 - `CONTACT_USER_ID`: user to DM in case of errors (optional)
 
-4. Currently autobump supports two bump bots: DISBOARD and DiscordHome. To run the DISBOARD autobumper, you need to provide a channel ID in the `DISBOARD_CHANNEL_ID` environment variable. Same thing for DiscordHome. At least one must be provided to run autobump.
+3. Run `deno task build` or `npx tsc`
+4. Run `node dist`, or `deno task start` / `npm start` to run in the background. Unfortunately Deno hasn't implemented `setTimeout` in the way I expected, preventing both bumpers to run simultaneously. So NodeJS still needs to be used to run the compiled JavaScript.
+
+**NOTE:** Currently autobump supports two bump bots: DISBOARD and DiscordHome. To run the DISBOARD autobumper, you need to provide a channel ID in the `DISBOARD_CHANNEL_ID` environment variable. Same thing for DiscordHome with the `DISCORDHOME_CHANNEL_ID` environment variable. At least one must be provided to run autobump.
