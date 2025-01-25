@@ -7,7 +7,7 @@ import { log } from './util.js';
 (await import('dotenv')).config();
 const { DISBOARD_CHANNEL_ID, DISCORDHOME_CHANNEL_ID, CONTACT_USER_ID } = process.env;
 
-if (!DISBOARD_CHANNEL_ID || !DISCORDHOME_CHANNEL_ID) {
+if (!DISBOARD_CHANNEL_ID && !DISCORDHOME_CHANNEL_ID) {
 	throw Error('no bump channel ids provided in environment!');
 }
 
