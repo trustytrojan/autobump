@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import Discord from 'discord.js-selfbot-v13';
-import { log, millis } from '../util.js';
+import { log, millis } from '../util.ts';
 
 /**
  * Sends `/bump` to DISBOARD in `channel`.

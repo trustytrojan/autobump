@@ -1,7 +1,7 @@
 import { Client, TextChannel } from 'discord.js-selfbot-v13';
 import assert from 'node:assert';
 import process from 'node:process';
-import { log } from './util.js';
+import { log } from './util.ts';
 
 // import .env, setup constants and logging
 (await import('dotenv')).config();
@@ -70,9 +70,9 @@ const startBumpLoop = async (bumperModulePath: string, channelId: string) => {
 };
 
 if (DISBOARD_CHANNEL_ID) {
-	startBumpLoop(`${import.meta.dirname}/bumpers/disboard.js`, DISBOARD_CHANNEL_ID);
+	startBumpLoop(`${import.meta.dirname}/bumpers/disboard.ts`, DISBOARD_CHANNEL_ID);
 }
 
 if (DISCORDHOME_CHANNEL_ID) {
-	startBumpLoop(`${import.meta.dirname}/bumpers/discordhome.js`, DISCORDHOME_CHANNEL_ID);
+	startBumpLoop(`${import.meta.dirname}/bumpers/discordhome.ts`, DISCORDHOME_CHANNEL_ID);
 }
