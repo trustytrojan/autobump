@@ -1,5 +1,5 @@
 export const log = (msg: string) => {
-	const obj: { stack: string } = {} as any;
+	const obj = {} as { stack: string };
 	Error.captureStackTrace(obj, log); // Capture the stack trace, excluding `log` itself
 	const stackLines = obj.stack.split('\n');
 	// The first line is the error message itself, which we don't need, and the second line should now be the caller

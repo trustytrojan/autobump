@@ -1,4 +1,4 @@
-import Discord from 'discord.js-selfbot-v13';
+import { Client, TextChannel } from 'discord.js-selfbot-v13';
 import assert from 'node:assert';
 import process from 'node:process';
 import { log } from './util.js';
@@ -12,7 +12,7 @@ if (!DISBOARD_CHANNEL_ID && !DISCORDHOME_CHANNEL_ID) {
 }
 
 // setup discord.js client
-const client = new Discord.Client({ presence: { status: 'invisible' } });
+const client = new Client({ presence: { status: 'invisible' } });
 await client.login();
 log(`Logged in as: ${client.user?.tag}`);
 
@@ -52,7 +52,7 @@ if (contact_user) log(`Fetched contact user ${contact_user.id} (${contact_user.u
 const fetchBumpChannel = async (id: string) => {
 	const channel = await client.channels.fetch(id);
 	if (!channel) throw `Channel ${id} not found or not accessible!`;
-	if (!(channel instanceof Discord.TextChannel)) throw `Channel ${id} is not a text channel!`;
+	if (!(channel instanceof TextChannel)) throw `Channel ${id} is not a text channel!`;
 	if (!channel.permissionsFor(channel.guild.members.me!, true).has('USE_APPLICATION_COMMANDS'))
 		throw `You don't have slash command permissions in channel ${id}!`;
 	return channel;
@@ -60,7 +60,7 @@ const fetchBumpChannel = async (id: string) => {
 
 const startBumpLoop = async (bumperModulePath: string, channelId: string) => {
 	const channel = await fetchBumpChannel(channelId);
-	const bump = (await import(bumperModulePath)).default;
+	const bump: (channel: TextChannel) => Promise<number> = (await import(bumperModulePath)).default;
 	const loop = (bumpDelayMs: number) => {
 		assert(bumpDelayMs > 0);
 		log(`Next bump: ${new Date(Date.now() + bumpDelayMs).toLocaleTimeString()}`);

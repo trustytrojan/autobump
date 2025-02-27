@@ -1,10 +1,12 @@
 {
 	"dependencies": {
-		"@types/node": "^22.10.5",
 		"discord.js-selfbot-v13": "^3.1.4",
 		"dotenv": "^16.4.5",
-		"prettier": "^3.4.2",
-		"typescript": "^5.7.2"
+		"typescript": "^5.7.3"
+	},
+	"devDependencies": {
+		"@types/node": "^22.13.5",
+		"prettier": "^3.5.2"
 	},
 	"type": "module",
 	"scripts": {
