@@ -43,8 +43,8 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 		}
 	}
 
-	if (msg.content.startsWith('Please answer the question below:')) {
-		const mathExpression = msg.content.split('\n')[1].replaceAll('x', '*');
+	if (msg.content.includes('Please answer the question below')) {
+		const mathExpression = msg.content.split('\n')[2].replaceAll('*', '').replaceAll('x', '*');
 
 		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression)) {
 			throw new Error('Invalid math expression!');
@@ -58,12 +58,16 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 		assert(buttonCustomId);
 
 		// clickButton expects either an (x, y) coordinate or a component's customId
-		await msg.clickButton(buttonCustomId).catch(() => {}); // this interaction WILL fail; discard the error
+		await msg.clickButton(buttonCustomId);
 
-		// No matter what button is clicked, the bot does not respond to the interaction (considered a "failed interaction").
-		// So we need to verify that the bump was successful by calling /bump again.
-		// Easiest way to do this is recursing, since we have the 'Unfortunately, ' case handled above.
-		return discordhome(channel);
+		// 2/27/25 - THEY FIXED THEIR BOT: interaction doesnt fail but updates the message.
+		// Now we need to check it for a success message
+		if (msg.embeds[0].description?.includes('bumped successfully')) {
+			log('Bumped after math quiz!');
+			return millis.fromHours(2) + millis.fromMinutes(1);
+		}
+
+		throw new Error('we screwed up');
 	}
 
 	throw new Error('None of the possible cases were hit!');

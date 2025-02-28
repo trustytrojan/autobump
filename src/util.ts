@@ -1,4 +1,4 @@
-export const log = (msg: string) => {
+export const log = (msg: unknown) => {
 	const obj = {} as { stack: string };
 	Error.captureStackTrace(obj, log); // Capture the stack trace, excluding `log` itself
 	const stackLines = obj.stack.split('\n');
