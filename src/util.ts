@@ -13,3 +13,5 @@ export const millis = Object.freeze({
 	fromHours: (hours: number) => 3.6e6 * hours,
 	fromMinutes: (minutes: number) => 6e4 * minutes
 });
+
+export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

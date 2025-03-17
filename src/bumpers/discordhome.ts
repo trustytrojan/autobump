@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import Discord from 'discord.js-selfbot-v13';
-import { log, millis } from '../util.ts';
+import { log, millis, wait } from '../util.ts';
 
 /**
  * Sends `/bump` to DH Bump in `channel`, and responds to the challenge.
@@ -57,8 +57,18 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 		)?.customId;
 		assert(buttonCustomId);
 
-		// clickButton expects either an (x, y) coordinate or a component's customId
-		await msg.clickButton(buttonCustomId);
+		// sometimes the button click fails... gonna have to keep trying
+		while (true)
+			try {
+				await msg.clickButton(buttonCustomId);
+				break;
+			} catch (err) {
+				if (err instanceof Error && !err.message.includes('INTERACTION_FAILED')) {
+					log('Unknown error occurred when trying to click button!');
+					throw err;
+				}
+				await wait(1_000);
+			}
 
 		// 2/27/25 - THEY FIXED THEIR BOT: interaction doesnt fail but updates the message.
 		// Now we need to check it for a success message
