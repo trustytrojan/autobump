@@ -13,9 +13,7 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 		msg = await channel.sendSlash('826100334534328340', 'bump');
 	} catch {
 		log(`/bump interaction failed, trying again in 1 minute`);
-		return await new Promise(resolve =>
-			setTimeout(() => discordhome(channel).then(resolve), millis.fromMinutes(1))
-		);
+		return millis.fromMinutes(1);
 	}
 
 	assert(msg instanceof Discord.Message);
@@ -24,7 +22,7 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 	if (embed) {
 		const { description, title } = embed;
 
-		if (description?.startsWith('Unfortunately, ')) {
+		if (description?.includes('Unfortunately, ')) {
 			const match = description.match(/(\d+)\s*hours?\s*(\d+)\s*minutes?/);
 			if (match) {
 				log(`Need to wait ${match[1]}h ${match[2]}m until bumping again!`);
@@ -58,16 +56,22 @@ export default async function discordhome(channel: Discord.TextChannel): Promise
 		assert(buttonCustomId);
 
 		// sometimes the button click fails... gonna have to keep trying
+		let attempts = 0;
 		while (true)
 			try {
 				await msg.clickButton(buttonCustomId);
 				break;
 			} catch (err) {
+				++attempts;
 				if (err instanceof Error && !err.message.includes('INTERACTION_FAILED')) {
 					log('Unknown error occurred when trying to click button!');
 					throw err;
 				}
-				await wait(1_000);
+				if (attempts < 5) await wait(1_000);
+				else {
+					log(`Failed 5 times trying to press the math quiz buttons. Will start a new /bump in 2 minutes`);
+					return millis.fromMinutes(2);
+				}
 			}
 
 		// 2/27/25 - THEY FIXED THEIR BOT: interaction doesnt fail but updates the message.
