@@ -9,9 +9,18 @@ export const log = (msg: unknown) => {
 	console.log(`[${new Date().toLocaleString()}; ${functionName}] ${msg}`);
 };
 
-export const millis = Object.freeze({
-	fromHours: (hours: number) => 3.6e6 * hours,
-	fromMinutes: (minutes: number) => 6e4 * minutes
-});
+export const millisFrom = ({
+	hours,
+	minutes,
+	seconds
+}: {
+	hours?: number;
+	minutes?: number;
+	seconds?: number;
+}) =>
+	(hours ? 3.6e6 * hours : 0) +
+	(minutes ? 6e4 * minutes : 0) +
+	(seconds ? 1e3 * seconds : 0);
 
-export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const wait = (ms: number) =>
+	new Promise(resolve => setTimeout(resolve, ms));
