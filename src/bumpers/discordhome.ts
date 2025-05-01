@@ -30,11 +30,11 @@ export default async function discordhome(
 			);
 			if (!match)
 				throw new Error('DH Bump cooldown message has changed!');
-			const hours = parseInt(match[1]), minutes = parseInt(match[2]) + 1;
-			if (isNaN(hours) || isNaN(minutes)) throw new Error('failed to parse time');
-			log(
-				`Need to wait ${hours}h ${minutes}m until bumping again!`
-			);
+			const hours = parseInt(match[1]),
+				minutes = parseInt(match[2]) + 1;
+			if (isNaN(hours) || isNaN(minutes))
+				throw new Error('failed to parse time');
+			log(`Need to wait ${hours}h ${minutes}m until bumping again!`);
 			return millisFrom({ hours, minutes });
 		}
 
