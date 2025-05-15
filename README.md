@@ -20,4 +20,7 @@ Assuming you have Deno or NPM installed:
 	DISCODUS_CHANNEL_ID=
 	```
 
-4. Run `node src/index.ts` to run in the foreground, or `deno task start` / `npm start` to run in the background. Unfortunately Deno hasn't implemented `setTimeout` in the way I expected, preventing any bumpers from starting their loops. So Node.js is needed for now.
+4. Run `node src/index.ts` to run in the foreground, or `deno task start` / `npm start` to run in the background. ~~Unfortunately Deno hasn't implemented `setTimeout` in the way I expected, preventing any bumpers from starting their loops. So Node.js is needed for now.~~ Deno works now!
+
+---
+TODO: transition to `deno fmt` from prettier

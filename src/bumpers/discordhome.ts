@@ -54,8 +54,10 @@ export default async function discordhome(
 	if (msg.content.includes('Please answer the question below')) {
 		const mathExpression = msg.content
 			.split('\n')[2]
-			.replaceAll('*', '')
-			.replaceAll('x', '*');
+			.replaceAll('*', '') // get rid of markdown bolding around the expression
+			.replaceAll('x', '*')
+			.replaceAll('✖️', '*') // 2025-05-15: they started using emojis 😂
+			.replaceAll('➕', '+');
 
 		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression)) {
 			throw new Error('Invalid math expression!');
