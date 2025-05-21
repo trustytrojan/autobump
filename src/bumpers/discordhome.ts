@@ -57,7 +57,8 @@ export default async function discordhome(
 			.replaceAll('*', '') // get rid of markdown bolding around the expression
 			.replaceAll('x', '*')
 			.replaceAll('✖️', '*') // 2025-05-15: they started using emojis 😂
-			.replaceAll('➕', '+');
+			.replaceAll('➕', '+')
+			.replaceAll('＋', '+'); // 2025-05-21: now it's those unicode look-alikes 😂 they seemed to have remove multiplication??????
 
 		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression)) {
 			throw new Error('Invalid math expression!');
