@@ -80,20 +80,21 @@ export default async function discordhome(
 				break;
 			} catch (err) {
 				++attempts;
+
 				if (
 					err instanceof Error
 					&& !err.message.includes('INTERACTION_FAILED')
 				) {
 					log('Unknown error occurred when trying to click button!');
-					throw err;
+					console.error(err);
 				}
+
 				if (attempts < 5)
 					await wait(1_000);
 				else {
 					log(
 						`Failed 5 times trying to press the math quiz buttons. Will start a new /bump in 2 minutes`,
 					);
-					// return millis.fromMinutes(2);
 					return millisFrom({ minutes: 2 });
 				}
 			}
