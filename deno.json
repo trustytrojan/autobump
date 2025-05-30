@@ -1,0 +1,35 @@
+{
+	"lint": {
+		"rules": {
+			"exclude": [
+				"no-explicit-any"
+			]
+		}
+	},
+	"fmt": {
+		"useTabs": true,
+		"trailingCommas": "onlyMultiLine",
+		"lineWidth": 80,
+		"indentWidth": 4,
+		"semiColons": true,
+		"singleQuote": true,
+		"proseWrap": "preserve",
+		"include": [
+			"src/**/*.ts"
+		],
+		"nextControlFlowPosition": "sameLine",
+		"operatorPosition": "nextLine",
+		"singleBodyPosition": "nextLine",
+		"typeLiteral.separatorKind": "semiColon",
+		"useBraces": "preferNone"
+	},
+	"tasks": {
+		"start": "bash -c 'node src/index.ts &>log & echo $! >pid'",
+		"stop": "bash -c 'kill $(<pid)'"
+	},
+	"imports": {
+		"discord.js-selfbot-v13": "npm:discord.js-selfbot-v13@^3.6.1",
+		"dotenv": "npm:dotenv@^16.5.0",
+		"out-of-character": "npm:out-of-character@^2.0.1"
+	}
+}

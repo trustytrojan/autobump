@@ -12,15 +12,15 @@ export const log = (msg: unknown) => {
 export const millisFrom = ({
 	hours,
 	minutes,
-	seconds
+	seconds,
 }: {
 	hours?: number;
 	minutes?: number;
 	seconds?: number;
 }) =>
-	(hours ? 3.6e6 * hours : 0) +
-	(minutes ? 6e4 * minutes : 0) +
-	(seconds ? 1e3 * seconds : 0);
+	(hours ? 3.6e6 * hours : 0)
+	+ (minutes ? 6e4 * minutes : 0)
+	+ (seconds ? 1e3 * seconds : 0);
 
 export const wait = (ms: number) =>
-	new Promise(resolve => setTimeout(resolve, ms));
+	new Promise((resolve) => setTimeout(resolve, ms));

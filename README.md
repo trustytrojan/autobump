@@ -4,8 +4,8 @@ A Discord selfbot that can bump several kinds of "bump" bots automatically! Curr
 Credit to [Lozarth/Disboard-Auto-Bump-Selfbot](https://github.com/Lozarth/Disboard-Auto-Bump-Selfbot) for the original DISBOARD bumping code and for inspiration.
 
 ## Usage
-Assuming you have Deno or NPM installed:
-1. Run `deno install` or `npm i` to install dependencies.
+Assuming you have Deno installed:
+1. Run `deno install` to install dependencies.
 2. Write a `.env` file like so:
 	```sh
 	# Discord user account token (can NOT be a Bot token)
@@ -19,8 +19,4 @@ Assuming you have Deno or NPM installed:
 	DISCORDHOME_CHANNEL_ID=
 	DISCODUS_CHANNEL_ID=
 	```
-
-4. Run `node src/index.ts` to run in the foreground, or `deno task start` / `npm start` to run in the background. ~~Unfortunately Deno hasn't implemented `setTimeout` in the way I expected, preventing any bumpers from starting their loops. So Node.js is needed for now.~~ Deno works now!
-
----
-TODO: transition to `deno fmt` from prettier
+3. Run `deno task start` to start autobump in the background. Run `deno task stop` to stop it.

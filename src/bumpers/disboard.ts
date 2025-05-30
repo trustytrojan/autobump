@@ -7,7 +7,7 @@ import { log, millisFrom } from '../util.ts';
  * @returns The time in milliseconds until we can `/bump` again.
  */
 export default async function disboard(
-	channel: Discord.TextChannel
+	channel: Discord.TextChannel,
 ): Promise<number> {
 	let msg;
 
@@ -27,11 +27,13 @@ export default async function disboard(
 
 	if (msg.embeds[0]?.description?.startsWith('Please wait')) {
 		const match = msg.embeds[0].description.match(/(\d+) minutes/);
-		if (!match) throw new Error('cooldown message changed');
+		if (!match)
+			throw new Error('cooldown message changed');
 		const minutesUntilNextBump = parseInt(match[1]);
-		if (isNaN(minutesUntilNextBump)) throw new Error('time parse failed');
+		if (isNaN(minutesUntilNextBump))
+			throw new Error('time parse failed');
 		log(
-			`Need to wait ${minutesUntilNextBump} minutes until bumping again!`
+			`Need to wait ${minutesUntilNextBump} minutes until bumping again!`,
 		);
 		// add 1 minute to be safe
 		return millisFrom({ minutes: minutesUntilNextBump + 1 });

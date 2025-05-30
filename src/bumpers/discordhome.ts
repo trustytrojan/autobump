@@ -1,13 +1,14 @@
 import assert from 'node:assert';
 import Discord from 'discord.js-selfbot-v13';
 import { log, millisFrom, wait } from '../util.ts';
+import ooc from 'out-of-character';
 
 /**
  * Sends `/bump` to DH Bump in `channel`, and responds to the challenge.
  * @returns The time in milliseconds until we can `/bump` again.
  */
 export default async function discordhome(
-	channel: Discord.TextChannel
+	channel: Discord.TextChannel,
 ): Promise<number> {
 	let msg;
 
@@ -26,7 +27,7 @@ export default async function discordhome(
 
 		if (description?.includes('Unfortunately, ')) {
 			const match = description.match(
-				/(\d+)\s*hours?\s*(\d+)\s*minutes?/
+				/(\d+)\s*hours?\s*(\d+)\s*minutes?/,
 			);
 			if (!match)
 				throw new Error('DH Bump cooldown message has changed!');
@@ -38,9 +39,8 @@ export default async function discordhome(
 			return millisFrom({ hours, minutes });
 		}
 
-		if (title === 'Bump Error!') {
+		if (title === 'Bump Error!')
 			throw new Error(embed.description!);
-		}
 
 		// Sometimes it doesn't give a math challenge.
 		if (
@@ -52,49 +52,52 @@ export default async function discordhome(
 	}
 
 	if (msg.content.includes('Please answer the question below')) {
-		const mathExpression = msg.content
+		const mathExpression = ooc.replace(msg.content)
 			.split('\n')[2]
 			.replaceAll('*', '') // get rid of markdown bolding around the expression
 			.replaceAll('x', '*')
 			.replaceAll('✖️', '*') // 2025-05-15: they started using emojis 😂
 			.replaceAll('➕', '+')
-			.replaceAll('＋', '+'); // 2025-05-21: now it's those unicode look-alikes 😂 they seemed to have remove multiplication??????
+			.replaceAll('＋', '+') // 2025-05-21: now it's those unicode look-alikes 😂 they seemed to have remove multiplication??????
+			.replaceAll('⁠⁣➖', '-') // 2025-05-30: subtraction AND INVISIBLE UNICODE introduced 😂 thanks to npm:out-of-character 🙏
+			.replaceAll('－', '-');
 
-		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression)) {
-			throw new Error('Invalid math expression!');
-		}
+		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression))
+			throw new Error(`Invalid math expression: '${mathExpression}'`);
 
 		const result = eval(mathExpression);
 		assert(typeof result === 'number');
 		const buttonCustomId = msg.components[0].components.find(
-			b => b.type === 'BUTTON' && b.label == result.toString()
+			(b) => b.type === 'BUTTON' && b.label == result.toString(),
 		)?.customId;
 		assert(buttonCustomId);
 
 		// sometimes the button click fails... gonna have to keep trying
 		let attempts = 0;
-		while (true)
+		while (true) {
 			try {
 				await msg.clickButton(buttonCustomId);
 				break;
 			} catch (err) {
 				++attempts;
 				if (
-					err instanceof Error &&
-					!err.message.includes('INTERACTION_FAILED')
+					err instanceof Error
+					&& !err.message.includes('INTERACTION_FAILED')
 				) {
 					log('Unknown error occurred when trying to click button!');
 					throw err;
 				}
-				if (attempts < 5) await wait(1_000);
+				if (attempts < 5)
+					await wait(1_000);
 				else {
 					log(
-						`Failed 5 times trying to press the math quiz buttons. Will start a new /bump in 2 minutes`
+						`Failed 5 times trying to press the math quiz buttons. Will start a new /bump in 2 minutes`,
 					);
 					// return millis.fromMinutes(2);
 					return millisFrom({ minutes: 2 });
 				}
 			}
+		}
 
 		// 2/27/25 - THEY FIXED THEIR BOT: interaction doesnt fail but updates the message.
 		// Now we need to check it for a success message
