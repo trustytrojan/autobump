@@ -59,7 +59,7 @@ export default async function discordhome(
 			.replaceAll('✖️', '*') // 2025-05-15: they started using emojis 😂
 			.replaceAll('➕', '+')
 			.replaceAll('＋', '+') // 2025-05-21: now it's those unicode look-alikes 😂 they seemed to have remove multiplication??????
-			.replaceAll('⁠⁣➖', '-') // 2025-05-30: subtraction AND INVISIBLE UNICODE introduced 😂 thanks to npm:out-of-character 🙏
+			.replaceAll('➖', '-') // 2025-05-30: subtraction AND INVISIBLE UNICODE introduced 😂 thanks to npm:out-of-character 🙏
 			.replaceAll('－', '-');
 
 		if (!/^[0-9+\-*/()\s]+$/.test(mathExpression))
