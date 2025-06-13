@@ -24,7 +24,7 @@
 		"useBraces": "preferNone"
 	},
 	"tasks": {
-		"start": "bash -c 'node src/index.ts &>log & echo $! >pid'",
+		"start": "bash -c 'deno -A src/index.ts &>log & echo $! >pid'",
 		"stop": "bash -c 'kill $(<pid)'"
 	},
 	"imports": {
